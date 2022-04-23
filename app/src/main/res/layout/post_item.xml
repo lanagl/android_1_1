@@ -36,7 +36,7 @@
         android:id="@+id/postDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/material_dynamic_neutral_variant50"
+        android:textColor="#A5A5A5"
         app:layout_constraintBottom_toBottomOf="@id/avatar"
         app:layout_constraintEnd_toEndOf="@id/authorName"
         app:layout_constraintStart_toStartOf="@id/authorName"
@@ -65,7 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_indent"
-        android:textColor="@color/material_dynamic_neutral_variant50"
+        android:textColor="#A5A5A5"
         app:layout_constraintBottom_toTopOf="@id/contentLink"
         app:layout_constraintTop_toBottomOf="@id/headerBarrier"
         tools:maxHeight="250dp"
@@ -82,7 +82,7 @@
         app:layout_constraintBottom_toTopOf="@id/textBarrier"
         app:layout_constraintTop_toBottomOf="@id/content"
         tools:layout_editor_absoluteX="16dp"
-        tools:text="Подробнее..." />
+        android:text="@string/more" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/textBarrier"
