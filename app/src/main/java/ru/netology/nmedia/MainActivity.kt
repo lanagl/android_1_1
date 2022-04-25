@@ -3,13 +3,13 @@ package ru.netology.nmedia
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
-import ru.netology.nmedia.databinding.PostItemBinding
+import ru.netology.nmedia.databinding.ActivityMainBinding
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = PostItemBinding.inflate(layoutInflater)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val post = Post(
@@ -21,21 +21,34 @@ class MainActivity : AppCompatActivity() {
             reposts = 0,
             views = 0
         )
-
         binding.render(post)
-        binding.likeButton.setOnClickListener {
+        binding.post.likeButton.setOnClickListener {
             post.likes.userLikes=!post.likes.userLikes
-            binding.likeButton.setImageResource(getLikeIconResId(post.likes.userLikes))
+            binding.post.likeButton.setImageResource(getLikeIconResId(post.likes.userLikes))
+            if(post.likes.userLikes) {
+                post.likes.count++
+            } else {
+                post.likes.count--
+            }
+            binding.post.likeCounter.text = formatCount(post.likes.count)
         }
+
+        binding.post.shareButton.setOnClickListener {
+            post.reposts++
+            binding.post.shareCounter.text = formatCount(post.reposts)
+        }
+
+
     }
-    private fun PostItemBinding.render(post: Post){
-        authorName.text = post.author
-        content.text = post.text
-        postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd", post.date)
-        likeCounter.text = post.likes.count.toString()
-        looksCounter.text=post.views.toString()
-        shareCounter.text = post.reposts.toString()
-        likeButton.setImageResource(getLikeIconResId(post.likes.userLikes))
+    private fun ActivityMainBinding.render(postItem: Post){
+        post.authorName.text = postItem.author
+
+        post.content.text = postItem.text
+        post.postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd", postItem.date)
+        post.likeCounter.text = formatCount(postItem.likes.count)
+        post.looksCounter.text=formatCount(postItem.views)
+        post.shareCounter.text = formatCount(postItem.reposts)
+        post.likeButton.setImageResource(getLikeIconResId(postItem.likes.userLikes))
     }
 
     @DrawableRes
