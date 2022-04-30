@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.data.impl.PostsAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.viewModel.PostViewModel
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<PostViewModel>()
