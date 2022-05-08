@@ -10,41 +10,45 @@ import java.util.*
 
 class InMemoryPostRepository: PostRepository {
 
-    private var post = Post(
-        id = 0L,
-        author = "Автор",
-        text = "Текст поста",
-        date =  Date(),
-        likes = Likes(count = 0, userLikes = false),
-        reposts = 0,
-        views = 0
+
+    private val posts get() = checkNotNull(data.value){
+        "Data value should not be null"}
+
+    override val data = MutableLiveData(List(1000) { index ->
+        Post(
+            id = index+1L,
+            author = "Автор",
+            text = "Текст поста $index",
+            date = Date(),
+            likes = Likes(count = 0, userLikes = false),
+            reposts = 0,
+            views = 0
+        )
+    }
     )
-    override val data =MutableLiveData(post)
 
-    override fun like() {
-        val currentPost = checkNotNull(data.value){
-            "Data value should not be null"
-        }
-        val currentLikes = checkNotNull(currentPost.likes){
-            "Data value should not be null"
-        }
-        val userLikes = !currentLikes.userLikes
 
-        val count: Int = if(userLikes) {
-            currentLikes.count+1
-        } else {
-            currentLikes.count-1
-        }
-        val likes = currentLikes.copy(userLikes = userLikes, count=count)
-        val likedPost = currentPost.copy(likes = likes)
-        data.value = likedPost
+
+
+
+    override fun like(postId: Long) {
+
+        data.value = posts.map { if(it.id!= postId) it else {
+            val currentLikes = checkNotNull(it.likes){
+                "Data value should not be null"
+            }
+            val userLikes = !currentLikes.userLikes
+            val count: Int = if(userLikes) {
+                currentLikes.count+1
+            } else {
+                currentLikes.count-1
+            }
+            val likes = currentLikes.copy(userLikes = userLikes, count=count)
+            it.copy(likes = likes)
+        } }
     }
 
-    override fun share() {
-        val currentPost = checkNotNull(data.value){
-            "Data value should not be null"
-        }
-        val sharedPost = currentPost.copy(reposts = currentPost.reposts+1)
-        data.value = sharedPost
+    override fun share(postId: Long) {
+        data.value = posts.map { if (it.id!= postId) it else it.copy(reposts = it.reposts+1) }
     }
 }
