@@ -1,9 +1,11 @@
 package ru.netology.nmedia
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.databinding.ActivityMainBinding
+import ru.netology.nmedia.viewModel.PostViewModel
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -12,39 +14,28 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val post = Post(
-            id = 0L,
-            author = "Автор",
-            text = "Текст поста",
-            date =  Date(),
-            likes = Likes(count = 0, userLikes = false),
-            reposts = 0,
-            views = 0
-        )
-        binding.render(post)
-        binding.post.likeButton.setOnClickListener {
-            post.likes.userLikes=!post.likes.userLikes
-            binding.post.likeButton.setImageResource(getLikeIconResId(post.likes.userLikes))
-            if(post.likes.userLikes) {
-                post.likes.count++
-            } else {
-                post.likes.count--
+        val viewModel by viewModels<PostViewModel>()
+        viewModel.data.observe(this){post ->
+            with(binding) {
+                binding.render(post)
             }
-            binding.post.likeCounter.text = formatCount(post.likes.count)
+        }
+
+
+        binding.post.likeButton.setOnClickListener {
+            viewModel.like()
         }
 
         binding.post.shareButton.setOnClickListener {
-            post.reposts++
-            binding.post.shareCounter.text = formatCount(post.reposts)
+            viewModel.share()
         }
 
 
     }
     private fun ActivityMainBinding.render(postItem: Post){
         post.authorName.text = postItem.author
-
         post.content.text = postItem.text
-        post.postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd", postItem.date)
+        post.postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", postItem.date)
         post.likeCounter.text = formatCount(postItem.likes.count)
         post.looksCounter.text=formatCount(postItem.views)
         post.shareCounter.text = formatCount(postItem.reposts)
