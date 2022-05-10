@@ -67,10 +67,11 @@ internal class PostsAdapter(
                 authorName.text = post.author
                 content.text = post.text
                 postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", post.date)
-                likeCounter.text = formatCount(post.likes.count)
+                likeButton.text = formatCount(post.likes.count)
                 looksCounter.text = formatCount(post.views)
-                shareCounter.text = formatCount(post.reposts)
-                likeButton.setImageResource(getLikeIconResId(post.likes.userLikes))
+                shareButton.text = formatCount(post.reposts)
+                likeButton.isChecked = post.likes.userLikes
+                //likeButton.setButtonDrawable(getLikeIconResId(post.likes.userLikes))
                 options.setOnClickListener { popupMenu.show() }
             }
         }

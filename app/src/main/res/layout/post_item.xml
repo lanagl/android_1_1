@@ -26,7 +26,7 @@
         android:layout_marginEnd="@dimen/inner_indent"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/purple_700"
+        android:textColor="@color/teal_700"
         app:layout_constraintBottom_toTopOf="@id/postDate"
         app:layout_constraintEnd_toStartOf="@id/options"
         app:layout_constraintStart_toEndOf="@id/avatar"
@@ -45,15 +45,17 @@
         app:layout_constraintTop_toBottomOf="@id/authorName"
         tools:text="22 апреля 2022" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/options"
+    <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_more_vert_24dp"
+        android:id="@+id/options"
+        style="@style/Widget.AppTheme.LikeCheckbox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/authorName"
-        app:layout_constraintTop_toTopOf="@id/avatar" />
+        app:layout_constraintTop_toTopOf="@id/avatar"
+        app:icon="@drawable/ic_baseline_more_vert_24dp"
+        />
+
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/headerBarrier"
@@ -92,55 +94,39 @@
         android:layout_height="0dp"
         app:barrierDirection="top"
         app:barrierMargin="@dimen/common_indent"
-        app:constraint_referenced_ids="likeButton,likeCounter,shareButton,shareCounter,
+        app:constraint_referenced_ids="likeButton,shareButton,
         looksButton, looksCounter"
         app:layout_constraintTop_toBottomOf="@id/contentLink" />
 
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/likeButton"
+    <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/common_indent"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_favorite_border_24dp"
+        android:id="@+id/likeButton"
         app:layout_constraintStart_toStartOf="@id/avatar"
-        app:layout_constraintTop_toBottomOf="@id/textBarrier" />
+        app:layout_constraintTop_toBottomOf="@id/textBarrier"
+        app:layout_constraintEnd_toStartOf="@id/shareButton"
+        app:icon="@drawable/ic_like_24"
+        style="@style/Widget.AppTheme.LikeCheckbox"
+        tools:text="10"
+        android:checkable="true"
+        tools:checked="true"
+        />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/likeCounter"
-        android:layout_width="0dp"
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/inner_indent"
+        android:id="@+id/shareButton"
+        android:layout_marginStart="@dimen/common_indent"
+        style="@style/Widget.AppTheme.LikeCheckbox"
         app:layout_constraintBottom_toBottomOf="@id/likeButton"
         app:layout_constraintStart_toEndOf="@id/likeButton"
         app:layout_constraintTop_toTopOf="@id/likeButton"
-        tools:text="10" />
+        tools:text="10"
+        app:icon="@drawable/ic_baseline_share_24dp"
+        />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/shareButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_indent"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_baseline_share_24dp"
-        app:layout_constraintBottom_toBottomOf="@id/likeButton"
-        app:layout_constraintStart_toEndOf="@id/likeCounter"
-        app:layout_constraintTop_toTopOf="@id/likeButton" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/shareCounter"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/inner_indent"
-        app:layout_constraintBottom_toBottomOf="@id/likeButton"
-        app:layout_constraintEnd_toStartOf="@id/looksButton"
-        app:layout_constraintStart_toEndOf="@id/shareButton"
-        app:layout_constraintTop_toTopOf="@id/likeButton"
-        tools:text="5" />
-
-
-    <androidx.appcompat.widget.AppCompatImageButton
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/looksButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -148,22 +134,18 @@
         android:src="@drawable/ic_baseline_visibility_24dp"
         app:layout_constraintBottom_toBottomOf="@id/likeButton"
         app:layout_constraintEnd_toStartOf="@id/looksCounter"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toEndOf="@id/shareCounter"
         app:layout_constraintTop_toTopOf="@id/likeButton"
-
+        android:layout_marginEnd="@dimen/inner_indent"
         />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/looksCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/inner_indent"
         android:minWidth="20sp"
         android:textAlignment="viewEnd"
         app:layout_constraintBottom_toBottomOf="@id/likeButton"
         app:layout_constraintEnd_toEndOf="@id/options"
-        app:layout_constraintStart_toEndOf="@id/looksButton"
         app:layout_constraintTop_toTopOf="@id/likeButton"
         tools:text="500" />
 
