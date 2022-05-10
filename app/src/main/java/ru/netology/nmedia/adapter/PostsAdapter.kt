@@ -71,14 +71,10 @@ internal class PostsAdapter(
                 looksCounter.text = formatCount(post.views)
                 shareButton.text = formatCount(post.reposts)
                 likeButton.isChecked = post.likes.userLikes
-                //likeButton.setButtonDrawable(getLikeIconResId(post.likes.userLikes))
                 options.setOnClickListener { popupMenu.show() }
             }
         }
 
-        @DrawableRes
-        private fun getLikeIconResId(liked: Boolean) =
-            if (liked) R.drawable.ic_baseline_favorite_24dp else R.drawable.ic_baseline_favorite_border_24dp
     }
 
 

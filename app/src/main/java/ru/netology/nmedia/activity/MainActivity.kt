@@ -1,9 +1,11 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.util.hideKeyboard
@@ -51,6 +53,16 @@ class MainActivity : AppCompatActivity() {
                     hideKeyboard()
                 }
             }
+        }
+
+        viewModel.sharePostContent.observe(this){postContent->
+            val intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, postContent)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+            startActivity(shareIntent)
         }
     }
 
