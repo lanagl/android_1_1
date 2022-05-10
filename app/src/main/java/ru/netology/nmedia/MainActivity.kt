@@ -31,37 +31,22 @@ class MainActivity : AppCompatActivity() {
 
         }
         binding.cancelEdit.setOnClickListener {
-            viewModel.oldPost.value = null
             viewModel.currentPost.value = null
         }
 
-
-        viewModel.oldPost.observe(this){oldPost->
-            with(binding.contentOld){
-                val context = oldPost?.text
+        viewModel.currentPost.observe(this){currentPost ->
+            val context = currentPost?.text
+            with(binding.contentEdit){
                 setText(context)
+                binding.contentOld.setText(context)
                 if(context!=null) {
                     binding.oldPost.visibility = View.VISIBLE
-                }
-                else
-                {
-                    binding.oldPost.visibility = View.GONE
-                }
-            }
-
-        }
-
-
-        viewModel.currentPost.observe(this){currentPost ->
-            with(binding.contentEdit){
-                val context = currentPost?.text
-                setText(context)
-                if(context!=null) {
                     requestFocus()
                     showKeyboard()
                 }
                 else
                 {
+                    binding.oldPost.visibility = View.GONE
                     clearFocus()
                     hideKeyboard()
                 }
