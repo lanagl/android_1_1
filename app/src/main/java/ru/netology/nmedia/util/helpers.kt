@@ -23,7 +23,7 @@ fun formatDigit(number: Int, digit: Int, suffix: String): String {
     val remainder= digit/10000
     return when {
         (number < (divider*10)) -> {
-            var str = StringBuilder()
+            val str = StringBuilder()
             str.append(number /divider)
             if ((number % divider / remainder) > 0) {
                 str.append(".")
