@@ -10,4 +10,6 @@
     <string name="Cancel">Cancel</string>
     <string name="Save">Save</string>
     <string name="chooser_share_post">Share</string>
+    <string name="empty_string">No text</string>
+    <string name="addPost">Add Post</string>
 </resources>

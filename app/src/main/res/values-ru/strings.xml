@@ -10,4 +10,6 @@
     <string name="Cancel">Отмена</string>
     <string name="Save">Сохранить</string>
     <string name="chooser_share_post">Поделиться</string>
+    <string name="empty_string">Значение отсутствует</string>
+    <string name="addPost">Новый пост</string>
 </resources>

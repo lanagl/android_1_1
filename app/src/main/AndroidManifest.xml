@@ -25,6 +25,11 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.PostContentActivity" android:exported="false" >
+            <intent-filter>
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
