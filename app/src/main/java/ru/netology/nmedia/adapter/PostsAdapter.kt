@@ -3,7 +3,6 @@ package ru.netology.nmedia.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -67,17 +66,14 @@ internal class PostsAdapter(
                 authorName.text = post.author
                 content.text = post.text
                 postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", post.date)
-                likeCounter.text = formatCount(post.likes.count)
+                likeButton.text = formatCount(post.likes.count)
                 looksCounter.text = formatCount(post.views)
-                shareCounter.text = formatCount(post.reposts)
-                likeButton.setImageResource(getLikeIconResId(post.likes.userLikes))
+                shareButton.text = formatCount(post.reposts)
+                likeButton.isChecked = post.likes.userLikes
                 options.setOnClickListener { popupMenu.show() }
             }
         }
 
-        @DrawableRes
-        private fun getLikeIconResId(liked: Boolean) =
-            if (liked) R.drawable.ic_baseline_favorite_24dp else R.drawable.ic_baseline_favorite_border_24dp
     }
 
 
