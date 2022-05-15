@@ -19,6 +19,7 @@ class PostViewModel : ViewModel(), PostInteractionListener {
     val navigateToPostContentScreenEvent = SingleLiveEvent<Unit?>()
     val navigateToEditPostContentScreenEvent = SingleLiveEvent<String?>()
     val sharePostContent = SingleLiveEvent<String>()
+    val playVideoLink = SingleLiveEvent<String?>()
 
     fun onSaveButtonClicked(content: String) {
         if(content.isBlank()) return
@@ -29,7 +30,9 @@ class PostViewModel : ViewModel(), PostInteractionListener {
             date = Date(),
             likes = Likes(count = 0, userLikes = false),
             reposts = 0,
-            views = 0
+            views = 0,
+            video = "https://youtu.be/Ed0Xdi_xdfw"
+
         )
         repository.save(newPost)
 
@@ -53,6 +56,12 @@ class PostViewModel : ViewModel(), PostInteractionListener {
     fun onAddClicked() {
         currentPost.value = null
         navigateToPostContentScreenEvent.call()
+    }
+
+    override fun onPlayClicked(post: Post) {
+        if (post.video!=null) {
+            playVideoLink.value = post.video
+        }
     }
 
     //endregion PostInteractionListener
