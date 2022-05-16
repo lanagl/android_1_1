@@ -70,10 +70,37 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_indent"
         android:textColor="#A5A5A5"
-        app:layout_constraintBottom_toTopOf="@id/contentLink"
+        app:layout_constraintBottom_toTopOf="@id/videoLink"
         app:layout_constraintTop_toBottomOf="@id/headerBarrier"
         tools:maxHeight="250dp"
         tools:text="@tools:sample/lorem/random" />
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/videoPreview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:constraint_referenced_ids="videoLink, buttonPlay"
+        />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/videoLink"
+        app:layout_constraintBottom_toTopOf="@id/contentLink"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        tools:srcCompat="@drawable/videobackground"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        />
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/buttonPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_play_circle_filled_24"
+        app:layout_constraintStart_toStartOf="@id/videoLink"
+        app:layout_constraintEnd_toEndOf="@id/videoLink"
+        app:layout_constraintTop_toTopOf="@id/videoLink"
+        app:layout_constraintBottom_toBottomOf="@id/videoLink"
+        />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/contentLink"
@@ -148,6 +175,7 @@
         app:layout_constraintEnd_toEndOf="@id/options"
         app:layout_constraintTop_toTopOf="@id/likeButton"
         tools:text="500" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

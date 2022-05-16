@@ -25,7 +25,8 @@ class InMemoryPostRepository : PostRepository {
             date = Date(),
             likes = Likes(count = 0, userLikes = false),
             reposts = 0,
-            views = 0
+            views = 0,
+            video = "https://youtu.be/Ed0Xdi_xdfw"
         )
     }
     )

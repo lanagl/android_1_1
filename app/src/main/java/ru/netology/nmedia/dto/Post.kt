@@ -9,7 +9,8 @@ data class Post(
     val date: Date,
     val likes: Likes,
     val views: Int,
-    val reposts: Int
+    val reposts: Int,
+    val video: String?
 )
 data class Likes(
     val count: Int,
