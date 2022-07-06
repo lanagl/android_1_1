@@ -67,7 +67,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="@dimen/common_indent"
         android:textColor="#A5A5A5"
         app:layout_constraintBottom_toTopOf="@id/videoLink"

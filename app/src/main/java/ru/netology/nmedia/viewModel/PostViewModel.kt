@@ -76,5 +76,6 @@ class PostViewModel(
         }
     }
 
+
     //endregion PostInteractionListener
 }
