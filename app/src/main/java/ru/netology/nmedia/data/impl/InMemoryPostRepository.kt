@@ -18,11 +18,12 @@ class InMemoryPostRepository : PostRepository {
         }
 
     override val data = MutableLiveData(List(GENERATED_POSTS_AMOUNT) { index ->
+        val rightNow = Calendar.getInstance().time
         Post(
             id = index + 1L,
             author = "Автор",
             text = "Текст поста $index",
-            date = Date(),
+            date = rightNow.time,
             likes = Likes(count = 0, userLikes = false),
             reposts = 0,
             views = 0,

@@ -1,18 +1,29 @@
 package ru.netology.nmedia.viewModel
 
 
+import android.app.Application
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import kotlinx.datetime.LocalDate
 import ru.netology.nmedia.Likes
 import ru.netology.nmedia.Post
 import ru.netology.nmedia.adapter.PostInteractionListener
 import ru.netology.nmedia.data.PostRepository
-import ru.netology.nmedia.data.impl.InMemoryPostRepository
+import ru.netology.nmedia.data.impl.FilePostRepository
+import ru.netology.nmedia.data.impl.SharedPrefsPostRepository
 import ru.netology.nmedia.util.SingleLiveEvent
+import java.text.DateFormat
 import java.util.*
 
-class PostViewModel : ViewModel(), PostInteractionListener {
-    private val repository: PostRepository = InMemoryPostRepository()
+class PostViewModel(
+    application: Application
+) : AndroidViewModel(application),
+    PostInteractionListener {
+
+    private val repository: PostRepository = FilePostRepository(application)
+
     val data by repository::data
 
     val currentPost = MutableLiveData<Post?>(null)
@@ -23,11 +34,12 @@ class PostViewModel : ViewModel(), PostInteractionListener {
 
     fun onSaveButtonClicked(content: String) {
         if(content.isBlank()) return
+        val rightNow = Calendar.getInstance().time
         val newPost = currentPost.value?.copy(text = content)?: Post(
             id = PostRepository.NEW_POST_ID,
             author = "Author",
             text = content,
-            date = Date(),
+            date = rightNow.time,
             likes = Likes(count = 0, userLikes = false),
             reposts = 0,
             views = 0,
