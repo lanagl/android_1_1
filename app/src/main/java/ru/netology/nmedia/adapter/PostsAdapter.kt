@@ -6,9 +6,7 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
-
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,9 +15,6 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.formatCount
 import ru.netology.nmedia.ui.PostContentFragment.Companion.postId
-import ru.netology.nmedia.ui.PostContentFragment.Companion.textArg
-
-import java.util.*
 
 
 internal class PostsAdapter(
