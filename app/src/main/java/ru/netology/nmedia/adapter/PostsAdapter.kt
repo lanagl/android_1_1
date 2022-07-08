@@ -1,9 +1,12 @@
 package ru.netology.nmedia.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +14,7 @@ import ru.netology.nmedia.Post
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostItemBinding
 import ru.netology.nmedia.formatCount
-import java.util.*
+import ru.netology.nmedia.ui.PostContentFragment.Companion.postId
 
 
 internal class PostsAdapter(
@@ -68,6 +71,7 @@ internal class PostsAdapter(
 
             with(binding) {
                 authorName.text = post.author
+                content.maxLines=5
                 content.text = post.text
                 postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", post.date)
                 likeButton.text = formatCount(post.likes.count)
@@ -79,10 +83,35 @@ internal class PostsAdapter(
                     videoLink.setImageResource(R.drawable.videobackground)
                     videoPreview.visibility=VISIBLE
                 }
+                content.setOnClickListener {
+                    linkToPost(it, post.id)
+                }
+                avatar.setOnClickListener {
+                    linkToPost(it, post.id)
+                }
+                postDate.setOnClickListener {
+                    linkToPost(it, post.id)
+                }
+                authorName.setOnClickListener {
+                    linkToPost(it, post.id)
+                }
+                contentLink.setOnClickListener {
+                    linkToPost(it, post.id)
+                }
+
             }
         }
 
+        private fun linkToPost(view: View?, id: Long) {
+            view?.findNavController()?.navigate(
+                R.id.action_feedFragment_to_postFragment,
+                Bundle().apply {
+                    postId = id
+                })
+        }
+
     }
+
 
 
     private object DiffCallback : DiffUtil.ItemCallback<Post>() {
