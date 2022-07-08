@@ -43,6 +43,7 @@ class PostFragment : Fragment() {
                         R.id.remove -> {
                             if (post != null) {
                                 viewModel.onDeleteClicked(post)
+                                findNavController().navigateUp()
                             }
                             true
                         }
