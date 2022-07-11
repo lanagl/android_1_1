@@ -69,6 +69,15 @@ class PostDaoImpl(
             """.trimIndent(), arrayOf(id))
     }
 
+    override fun shareById(id: Long) {
+        db.execSQL(
+            """
+                UPDATE ${PostsTable.POSTS_NAME} SET
+                    ${PostsTable.ColumnPosts.REPOSTS.columnName} = ${PostsTable.ColumnPosts.REPOSTS.columnName} + 1
+                WHERE ${PostsTable.ColumnPosts.ID.columnName} = ?;
+            """.trimIndent(), arrayOf(id))
+    }
+
     override fun removeById(id: Long) {
         db.delete(
             PostsTable.POSTS_NAME,
