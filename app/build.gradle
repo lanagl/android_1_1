@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization' version  '1.6.21'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -38,6 +39,8 @@ android {
 
 dependencies {
     def livecycle_version = "2.4.1"
+    def navigation_version = "2.4.2"
+    def room_version = "2.4.2"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
@@ -53,8 +56,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
     implementation "com.google.code.gson:gson:2.9.0"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
-    implementation "androidx.navigation:navigation-fragment-ktx:2.4.2"
-    implementation "androidx.navigation:navigation-ui-ktx:2.4.2"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "androidx.arch.core:core-testing:2.1.0"
