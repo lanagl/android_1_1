@@ -2,19 +2,14 @@ package ru.netology.nmedia.viewModel
 
 
 import android.app.Application
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import kotlinx.datetime.LocalDate
-import ru.netology.nmedia.Likes
 import ru.netology.nmedia.Post
 import ru.netology.nmedia.adapter.PostInteractionListener
 import ru.netology.nmedia.data.PostRepository
-import ru.netology.nmedia.data.impl.FilePostRepository
-import ru.netology.nmedia.data.impl.SharedPrefsPostRepository
+import ru.netology.nmedia.data.impl.SQLiteRepository
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.util.SingleLiveEvent
-import java.text.DateFormat
 import java.util.*
 
 class PostViewModel(
@@ -22,7 +17,11 @@ class PostViewModel(
 ) : AndroidViewModel(application),
     PostInteractionListener {
 
-    private val repository: PostRepository = FilePostRepository(application)
+    private val repository: PostRepository = SQLiteRepository(
+        dao = AppDb.getInstance(
+            context = application
+        ).postDao
+    )
 
     val data by repository::data
 
@@ -40,7 +39,8 @@ class PostViewModel(
             author = "Author",
             text = content,
             date = rightNow.time,
-            likes = Likes(count = 0, userLikes = false),
+            likesCount = 0,
+            likeByMe = false,
             reposts = 0,
             views = 0,
             video = "https://youtu.be/Ed0Xdi_xdfw"

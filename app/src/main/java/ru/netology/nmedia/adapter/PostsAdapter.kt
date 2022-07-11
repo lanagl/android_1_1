@@ -74,10 +74,10 @@ internal class PostsAdapter(
                 content.maxLines=5
                 content.text = post.text
                 postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", post.date)
-                likeButton.text = formatCount(post.likes.count)
+                likeButton.text = formatCount(post.likesCount)
                 looksCounter.text = formatCount(post.views)
                 shareButton.text = formatCount(post.reposts)
-                likeButton.isChecked = post.likes.userLikes
+                likeButton.isChecked = post.likeByMe
                 options.setOnClickListener { popupMenu.show() }
                 if(post.video!=null){
                     videoLink.setImageResource(R.drawable.videobackground)

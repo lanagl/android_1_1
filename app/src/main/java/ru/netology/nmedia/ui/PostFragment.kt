@@ -72,10 +72,10 @@ class PostFragment : Fragment() {
                     postDate.text =
                         android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", currentPost.date)
                     content.text = currentPost.text
-                    likeButton.text = formatCount(currentPost.likes.count)
+                    likeButton.text = formatCount(currentPost.likesCount)
                     looksCounter.text = formatCount(currentPost.views)
                     shareButton.text = formatCount(currentPost.reposts)
-                    likeButton.isChecked = currentPost.likes.userLikes
+                    likeButton.isChecked = currentPost.likeByMe
                     options.setOnClickListener { popupMenu.show() }
                     contentLink.isGone = true
                     videoLink.setImageResource(R.drawable.videobackground)
