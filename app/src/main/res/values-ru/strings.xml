@@ -12,4 +12,9 @@
     <string name="chooser_share_post">Поделиться</string>
     <string name="empty_string">Значение отсутствует</string>
     <string name="addPost">Новый пост</string>
+    <string name="notification_user_liked">Пользователь %1$s поставил лайк посту %2$s</string>
+    <string name="notification_new_post">Пользователь %1$s добавил пост %2$s</string>
+    <string name="channel_remote_name">Тестовый канал уведомлений</string>
+    <string name="channel_remote_description">Тестовое описание канала уведомлений</string>
+
 </resources>

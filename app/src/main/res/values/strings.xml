@@ -12,4 +12,8 @@
     <string name="chooser_share_post">Share</string>
     <string name="empty_string">No text</string>
     <string name="addPost">Add Post</string>
+    <string name="notification_user_liked">User %1$s liked %2$s\`s post</string>
+    <string name="notification_new_post">User %1$s added new post: \n %2$s</string>
+    <string name="channel_remote_name">Test notification channel</string>
+    <string name="channel_remote_description">Test description notification channel</string>
 </resources>
