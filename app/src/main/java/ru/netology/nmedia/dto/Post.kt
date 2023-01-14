@@ -1,18 +1,10 @@
-package ru.netology.nmedia
+package ru.netology.nmedia.dto
 
-import kotlinx.serialization.Serializable
-import kotlinx.datetime.serializers.LocalDateComponentSerializer
-import java.time.LocalDate
-
-@Serializable
 data class Post(
     val id: Long,
-    val text: String,
     val author: String,
-    val date: Long,
-    val views: Int,
-    val reposts: Int,
-    val likesCount: Int,
-    val likeByMe: Boolean,
-    val video: String?
+    val content: String,
+    val published: String,
+    var likedByMe: Boolean,
+    val likes: Int = 0,
 )
