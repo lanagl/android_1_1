@@ -74,15 +74,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         thread {
             val old = _data.value?.posts.orEmpty()
             val editedPosts = _data.value?.posts.orEmpty()
+            val isLiked = editedPosts.find { it.id == id }?.likedByMe == true
             editedPosts.filter { it.id == id }?.forEach {it.likedByMe=!it.likedByMe}
+
 
             _data.postValue(_data.value?.copy(posts = editedPosts))
             try {
-                repository.likeById(id)
+                val likedPost = repository.likeById(id, isLiked)
+                val posts = _data.value?.posts.orEmpty().map { if (it.id == id) likedPost else it }
+                _data.postValue(_data.value?.copy(posts = posts))
             } catch (e: IOException) {
                 _data.postValue(_data.value?.copy(posts = old))
-            } finally {
-                loadPosts()
             }
 
         }
