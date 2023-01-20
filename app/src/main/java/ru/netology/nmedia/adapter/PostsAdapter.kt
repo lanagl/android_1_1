@@ -1,127 +1,87 @@
 package ru.netology.nmedia.adapter
 
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ru.netology.nmedia.Post
 import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.PostItemBinding
-import ru.netology.nmedia.formatCount
-import ru.netology.nmedia.ui.PostContentFragment.Companion.postId
+import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.dto.Post
 
+interface OnInteractionListener {
+    fun onLike(post: Post) {}
+    fun onEdit(post: Post) {}
+    fun onRemove(post: Post) {}
+    fun onShare(post: Post) {}
+}
 
-internal class PostsAdapter(
-    private val interactionListener: PostInteractionListener
-) : ListAdapter<Post, PostsAdapter.ViewHolder>(DiffCallback) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = PostItemBinding.inflate(inflater, parent, false)
-        return ViewHolder(binding, interactionListener)
+class PostsAdapter(
+    private val onInteractionListener: OnInteractionListener,
+) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
+        val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PostViewHolder(binding, onInteractionListener)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+        val post = getItem(position)
+        holder.bind(post)
     }
+}
 
-    class ViewHolder(
-        private val binding: PostItemBinding,
-        listener: PostInteractionListener
-    ) : RecyclerView.ViewHolder(binding.root) {
+class PostViewHolder(
+    private val binding: CardPostBinding,
+    private val onInteractionListener: OnInteractionListener,
+) : RecyclerView.ViewHolder(binding.root) {
 
-        private lateinit var post: Post
+    fun bind(post: Post) {
+        binding.apply {
+            author.text = post.author
+            published.text = post.published
+            content.text = post.content
+            // в адаптере
+            like.isChecked = post.likedByMe
+            like.text = "${post.likes}"
 
-        private val popupMenu by lazy {
-            PopupMenu(itemView.context, binding.options).apply {
-                inflate(R.menu.options_post)
-                setOnMenuItemClickListener { menuItem ->
-                    when(menuItem.itemId){
-                        R.id.remove->{
-                            listener.onDeleteClicked(post)
-                            true
+            menu.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.options_post)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.remove -> {
+                                onInteractionListener.onRemove(post)
+                                true
+                            }
+                            R.id.edit -> {
+                                onInteractionListener.onEdit(post)
+                                true
+                            }
+
+                            else -> false
                         }
-                        R.id.edit ->{
-                            listener.onEditClicked(post)
-                            true
-                        }
-                        else -> false
                     }
+                }.show()
+            }
 
-                }
+            like.setOnClickListener {
+                onInteractionListener.onLike(post)
+            }
+
+            share.setOnClickListener {
+                onInteractionListener.onShare(post)
             }
         }
+    }
+}
 
-        init {
-            binding.likeButton.setOnClickListener { listener.onLikeClicked(post) }
-            binding.shareButton.setOnClickListener { listener.onShareClicked(post) }
-            binding.buttonPlay.setOnClickListener { listener.onPlayClicked(post) }
-            binding.videoLink.setOnClickListener { listener.onPlayClicked(post) }
-        }
-
-        fun bind(post: Post) {
-
-            this.post = post
-
-            with(binding) {
-                authorName.text = post.author
-                content.maxLines=5
-                content.text = post.text
-                postDate.text = android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", post.date)
-                likeButton.text = formatCount(post.likesCount)
-                looksCounter.text = formatCount(post.views)
-                shareButton.text = formatCount(post.reposts)
-                likeButton.isChecked = post.likeByMe
-                options.setOnClickListener { popupMenu.show() }
-                if(post.video!=null){
-                    videoLink.setImageResource(R.drawable.videobackground)
-                    videoPreview.visibility=VISIBLE
-                }
-                content.setOnClickListener {
-                    linkToPost(it, post.id)
-                }
-                avatar.setOnClickListener {
-                    linkToPost(it, post.id)
-                }
-                postDate.setOnClickListener {
-                    linkToPost(it, post.id)
-                }
-                authorName.setOnClickListener {
-                    linkToPost(it, post.id)
-                }
-                contentLink.setOnClickListener {
-                    linkToPost(it, post.id)
-                }
-
-            }
-        }
-
-        private fun linkToPost(view: View?, id: Long) {
-            view?.findNavController()?.navigate(
-                R.id.action_feedFragment_to_postFragment,
-                Bundle().apply {
-                    postId = id
-                })
-        }
-
+class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
+    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+        return oldItem.id == newItem.id
     }
 
-
-
-    private object DiffCallback : DiffUtil.ItemCallback<Post>() {
-        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-            return oldItem == newItem
-        }
-
+    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+        return oldItem == newItem
     }
 }
