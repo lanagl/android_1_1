@@ -3,11 +3,14 @@ package ru.netology.nmedia.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
 
 interface OnInteractionListener {
@@ -44,6 +47,22 @@ class PostViewHolder(
             // в адаптере
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"
+            println("url = http://10.0.2.2:9999/avatars/${post.authorAvatar}")
+            Glide.with(binding.avatar)
+                .load("http://10.0.2.2:9999/avatars/${post.authorAvatar}")
+                .placeholder(R.drawable.ic_loading_100dp)
+                .error(R.drawable.ic_error_100dp)
+                .timeout(10_000)
+                .circleCrop()
+                .into(avatar)
+            if (post.attachment != null && post.attachment.type == AttachmentType.IMAGE) {
+                Glide.with(binding.postImage)
+                    .load("http://10.0.2.2:9999/images/${post.attachment.url}")
+                    .placeholder(R.drawable.ic_loading_100dp)
+                    .error(R.drawable.ic_error_100dp)
+                    .timeout(10_000)
+                    .into(postImage)
+            } else postImage.isVisible = false
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
