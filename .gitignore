@@ -1,6 +1,7 @@
 reserve.md
 HELP.md
 .gradle
+gradle/
 build/
 
 ### STS ###
@@ -14,6 +15,7 @@ build/
 
 ### IntelliJ IDEA ###
 .idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -46,3 +48,4 @@ captures/
 
 ### Gradle ###
 !gradle/wrapper/gradle-wrapper.jar
+/app/google-services.json
