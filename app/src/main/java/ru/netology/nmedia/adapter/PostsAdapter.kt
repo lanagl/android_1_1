@@ -62,6 +62,7 @@ class PostViewHolder(
                     .error(R.drawable.ic_error_100dp)
                     .timeout(10_000)
                     .into(postImage)
+                postImage.isVisible = true
             } else postImage.isVisible = false
 
             menu.setOnClickListener {
