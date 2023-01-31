@@ -27,7 +27,7 @@ class PostRepositoryImpl : PostRepository {
             }
 
             override fun onFailure(call: Call<Post>, t: Throwable) {
-                throw RuntimeException(t)
+                callback.onError(RuntimeException(t.localizedMessage))
             }
 
         })
@@ -48,7 +48,7 @@ class PostRepositoryImpl : PostRepository {
                 }
 
                 override fun onFailure(call: Call<Post>, t: Throwable) {
-                    throw RuntimeException(t)
+                    callback.onError(RuntimeException(t.localizedMessage))
                 }
 
             })
@@ -64,7 +64,7 @@ class PostRepositoryImpl : PostRepository {
                 }
 
                 override fun onFailure(call: Call<Post>, t: Throwable) {
-                    throw RuntimeException(t)
+                    callback.onError(RuntimeException(t.localizedMessage))
                 }
 
             })
@@ -83,7 +83,7 @@ class PostRepositoryImpl : PostRepository {
             }
 
             override fun onFailure(call: Call<Post>, t: Throwable) {
-                throw RuntimeException(t)
+                callback.onError(RuntimeException(t.localizedMessage))
             }
 
         })
@@ -102,7 +102,7 @@ class PostRepositoryImpl : PostRepository {
             }
 
             override fun onFailure(call: Call<Unit>, t: Throwable) {
-                throw RuntimeException(t)
+                callback.onError(RuntimeException(t.localizedMessage))
             }
 
         })
@@ -123,7 +123,7 @@ class PostRepositoryImpl : PostRepository {
             }
 
             override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                throw RuntimeException(t)
+                callback.onError(RuntimeException(t.localizedMessage))
             }
 
         })
