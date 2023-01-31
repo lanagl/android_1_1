@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -61,6 +63,16 @@ class FeedFragment : Fragment() {
             binding.emptyText.isVisible = state.empty
         }
 
+        viewModel.toastMessage.observe(viewLifecycleOwner, Observer { it ->
+
+            val text = if (it.isNullOrEmpty()) getString(R.string.error_loading) else it
+            Toast.makeText(
+                context,
+                text,
+                Toast.LENGTH_LONG
+            ).show()
+        })
+
         binding.retryButton.setOnClickListener {
             viewModel.loadPosts()
         }
@@ -69,7 +81,7 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
-        binding.refresh.setOnRefreshListener{
+        binding.refresh.setOnRefreshListener {
             viewModel.loadPosts()
             binding.refresh.isRefreshing = false
         }

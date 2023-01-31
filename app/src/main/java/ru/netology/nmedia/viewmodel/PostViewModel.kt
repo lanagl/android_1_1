@@ -28,6 +28,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         get() = _data
     val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
+    val toastMessage = SingleLiveEvent<String>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
@@ -39,7 +40,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         _data.postValue(FeedModel(loading = true))
 
-        repository.getAll(object : PostRepository.GetAllCallback {
+        repository.getAll(object : PostRepository.Callback<List<Post>> {
             override fun onSuccess(posts: List<Post>) {
                 _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }
@@ -54,12 +55,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun save() {
         edited.value?.let {
 
-            repository.save(it, object : PostRepository.SaveRemoveCallback {
-                override fun onSuccess() {
-                    _postCreated.postValue(Unit)
-                }
+            repository.save(it, object : PostRepository.Callback<Post> {
 
             })
+            _postCreated.postValue(Unit)
         }
         edited.value = empty
     }
@@ -78,21 +77,23 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun likeById(id: Long) {
 
-        val old = _data.value?.posts.orEmpty()
+        val old = _data.value?.posts.orEmpty().map { it.copy() }
         val editedPosts = _data.value?.posts.orEmpty()
         val isLiked = editedPosts.find { it.id == id }?.likedByMe == true
         editedPosts.filter { it.id == id }.forEach { it.likedByMe = !it.likedByMe }
 
 
-        _data.postValue(_data.value?.copy(posts = editedPosts))
+        _data.value = _data.value?.copy(posts = editedPosts)
 
-        repository.likeById(id, isLiked, object : PostRepository.PostCallback {
+        repository.likeById(id, isLiked, object : PostRepository.Callback<Post> {
             override fun onSuccess(post: Post) {
                 val posts = _data.value?.posts.orEmpty().map { if (it.id == id) post else it }
                 _data.postValue(_data.value?.copy(posts = posts))
             }
 
             override fun onError(e: Exception) {
+                toastMessage.postValue(e.message.toString())
+
                 _data.postValue(_data.value?.copy(posts = old))
             }
         })
@@ -101,13 +102,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun removeById(id: Long) {
 
-        val old = _data.value?.posts.orEmpty()
+        val old = _data.value?.posts.orEmpty().map { it.copy() }
         _data.postValue(
             _data.value?.copy(posts = _data.value?.posts.orEmpty()
                 .filter { it.id != id }
             )
         )
-        repository.removeById(id, object : PostRepository.SaveRemoveCallback {
+        repository.removeById(id, object : PostRepository.Callback<Unit> {
             override fun onError(e: Exception) {
                 _data.postValue(_data.value?.copy(posts = old))
             }
