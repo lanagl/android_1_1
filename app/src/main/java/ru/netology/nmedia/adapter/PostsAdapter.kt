@@ -8,18 +8,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
-import kotlin.coroutines.EmptyCoroutineContext
 
 interface OnInteractionListener {
-    suspend fun onLike(post: Post) {}
+    fun onLike(post: Post) {}
     fun onEdit(post: Post) {}
-    suspend fun onRemove(post: Post) {}
+    fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
 }
 
@@ -74,11 +71,7 @@ class PostViewHolder(
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.remove -> {
-                                with(CoroutineScope(EmptyCoroutineContext)) {
-                                    launch {
-                                        onInteractionListener.onRemove(post)
-                                    }
-                                }
+                                onInteractionListener.onRemove(post)
                                 true
                             }
                             R.id.edit -> {
@@ -93,11 +86,7 @@ class PostViewHolder(
             }
 
             like.setOnClickListener {
-                with(CoroutineScope(EmptyCoroutineContext)) {
-                    launch {
-                        onInteractionListener.onLike(post)
-                    }
-                }
+                onInteractionListener.onLike(post)
             }
 
             share.setOnClickListener {

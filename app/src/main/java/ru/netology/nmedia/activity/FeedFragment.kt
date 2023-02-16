@@ -35,11 +35,11 @@ class FeedFragment : Fragment() {
                 viewModel.edit(post)
             }
 
-            override suspend fun onLike(post: Post) {
+            override fun onLike(post: Post) {
                 viewModel.likeById(post.id)
             }
 
-            override suspend fun onRemove(post: Post) {
+            override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
             }
 

@@ -91,7 +91,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = edited.value?.copy(content = text)
     }
 
-    suspend fun likeById(id: Long) = viewModelScope.launch {
+    fun likeById(id: Long) = viewModelScope.launch {
 
         val editedPosts = data.value?.posts.orEmpty()
         val isLiked = editedPosts.find { it.id == id }?.likedByMe == true
@@ -105,7 +105,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
-    suspend fun removeById(id: Long) = viewModelScope.launch {
+    fun removeById(id: Long) = viewModelScope.launch {
         try {
             repository.removeById(id)
         } catch (e: Exception) {
