@@ -1,131 +1,65 @@
 package ru.netology.nmedia.repository
 
+import androidx.lifecycle.map
 import okhttp3.MediaType.Companion.toMediaType
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.entity.PostEntity
 
 
-class PostRepositoryImpl : PostRepository {
+class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
 
     companion object {
         private const val BASE_URL = "http://10.0.2.2:9999"
         private val jsonType = "application/json".toMediaType()
     }
 
-    override fun getById(id: Long, callback: PostRepository.Callback<Post>) {
-        PostsApi.retrofitService.getById(id).enqueue(object : Callback<Post> {
-            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.message()))
-                    return
-                }
-
-                callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
-            }
-
-            override fun onFailure(call: Call<Post>, t: Throwable) {
-                callback.onError(RuntimeException(t.localizedMessage))
-            }
-
-        })
+    override suspend fun getById(id: Long) {
+        val response = PostsApi.retrofitService.getById(id)
+        if (!response.isSuccessful) throw RuntimeException("api error")
+        response.body() ?: throw RuntimeException(response.message())
+        postDao.getById(id)
 
     }
 
 
-    override fun likeById(id: Long, isLiked: Boolean, callback: PostRepository.Callback<Post>) {
+    override suspend fun likeById(id: Long, isLiked: Boolean) {
         if (isLiked) {
-            PostsApi.retrofitService.dislikeById(id).enqueue(object : Callback<Post> {
-                override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                    if (!response.isSuccessful) {
-                        callback.onError(RuntimeException(response.message()))
-                        return
-                    }
-
-                    callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
-                }
-
-                override fun onFailure(call: Call<Post>, t: Throwable) {
-                    callback.onError(RuntimeException(t.localizedMessage))
-                }
-
-            })
+            val response = PostsApi.retrofitService.dislikeById(id)
+            if (!response.isSuccessful) throw RuntimeException("api error")
+            response.body() ?: throw RuntimeException(response.message())
+            postDao.likeById(id)
         } else {
-            PostsApi.retrofitService.likeById(id).enqueue(object : Callback<Post> {
-                override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                    if (!response.isSuccessful) {
-                        callback.onError(RuntimeException(response.message()))
-                        return
-                    }
-
-                    callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
-                }
-
-                override fun onFailure(call: Call<Post>, t: Throwable) {
-                    callback.onError(RuntimeException(t.localizedMessage))
-                }
-
-            })
+            val response = PostsApi.retrofitService.likeById(id)
+            if (!response.isSuccessful) throw RuntimeException("api error")
+            response.body() ?: throw RuntimeException(response.message())
+            postDao.likeById(id)
         }
     }
 
-    override fun save(post: Post, callback: PostRepository.Callback<Post>) {
-        PostsApi.retrofitService.save(post).enqueue(object : Callback<Post> {
-            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.message()))
-                    return
-                }
+    override suspend fun save(post: Post) {
+        val response = PostsApi.retrofitService.save(post)
+        if (!response.isSuccessful) throw RuntimeException("api error")
+        response.body() ?: throw RuntimeException(response.message())
+        postDao.save(PostEntity.fromDto(post))
 
-                callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
-            }
-
-            override fun onFailure(call: Call<Post>, t: Throwable) {
-                callback.onError(RuntimeException(t.localizedMessage))
-            }
-
-        })
     }
 
-    override fun removeById(id: Long, callback: PostRepository.Callback<Unit>) {
-
-        PostsApi.retrofitService.removeById(id).enqueue(object : Callback<Unit> {
-            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.message()))
-                    return
-                }
-
-                callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
-            }
-
-            override fun onFailure(call: Call<Unit>, t: Throwable) {
-                callback.onError(RuntimeException(t.localizedMessage))
-            }
-
-        })
+    override suspend fun removeById(id: Long) {
+        val response = PostsApi.retrofitService.removeById(id)
+        if (!response.isSuccessful) throw RuntimeException("api error")
+        response.body() ?: throw RuntimeException(response.message())
+        postDao.removeById(id)
     }
 
-    override fun getAll(callback: PostRepository.Callback<List<Post>>) {
-        PostsApi.retrofitService.getAll().enqueue(object : Callback<List<Post>> {
-            override fun onResponse(
-                call: Call<List<Post>>,
-                response: Response<List<Post>>
-            ) {
-                if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.message()))
-                    return
-                }
+    override fun data() =
+        postDao.getAll().map { it.map(PostEntity::toDto) }
 
-                callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
-            }
-
-            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                callback.onError(RuntimeException(t.localizedMessage))
-            }
-
-        })
+    override suspend fun getAll() {
+        val response = PostsApi.retrofitService.getAll()
+        if (!response.isSuccessful) throw RuntimeException("api error")
+        response.body() ?: throw RuntimeException("body is null")
+        postDao.insert(response.body()!!.map { PostEntity.fromDto(it) })
     }
 }

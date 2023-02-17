@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -56,11 +57,18 @@ class FeedFragment : Fragment() {
         })
         binding.list.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
+        viewModel.data.observe(viewLifecycleOwner) { data ->
+            adapter.submitList(data.posts)
+            binding.emptyText.isVisible = data.empty
+        }
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
-            binding.errorGroup.isVisible = state.error
-            binding.emptyText.isVisible = state.empty
+            binding.refresh.isRefreshing = state.refreshing
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                    .show()
+            }
         }
 
         viewModel.toastMessage.observe(viewLifecycleOwner, Observer { it ->
@@ -73,17 +81,14 @@ class FeedFragment : Fragment() {
             ).show()
         })
 
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
-        }
-
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
         binding.refresh.setOnRefreshListener {
-            viewModel.loadPosts()
-            binding.refresh.isRefreshing = false
+            if (viewModel.state.value?.loading == false) {
+                viewModel.refreshPosts()
+            }
         }
 
         return binding.root
