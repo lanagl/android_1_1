@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.OnInteractionListener
@@ -61,6 +62,9 @@ class FeedFragment : Fragment() {
             adapter.submitList(data.posts)
             binding.emptyText.isVisible = data.empty
         }
+        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+            binding.fabTop.isVisible = state > 0
+        }
         viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
             binding.refresh.isRefreshing = state.refreshing
@@ -71,6 +75,18 @@ class FeedFragment : Fragment() {
             }
         }
 
+
+
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
+        })
+
+
+
         viewModel.toastMessage.observe(viewLifecycleOwner, Observer { it ->
 
             val text = if (it.isNullOrEmpty()) getString(R.string.error_loading) else it
@@ -80,6 +96,11 @@ class FeedFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
         })
+
+        binding.fabTop.setOnClickListener {
+            viewModel.loadVisiblePosts()
+            binding.fabTop.isVisible = false
+        }
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
