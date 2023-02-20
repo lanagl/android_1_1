@@ -2,6 +2,9 @@ package ru.netology.nmedia.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
@@ -18,14 +21,18 @@ private val empty = Post(
     likedByMe = false,
     likes = 0,
     published = "",
-    authorAvatar = ""
+    authorAvatar = "",
+    isHidden = false
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(application).postDao())
 
-    val data: LiveData<FeedModel> = repository.data().map { FeedModel(it, it.isEmpty()) }
+    val data: LiveData<FeedModel> = repository.data
+        .map(::FeedModel)
+        .asLiveData(Dispatchers.Default)
+
 
     private val _state = MutableLiveData(FeedModelState())
     val state: LiveData<FeedModelState>
@@ -35,6 +42,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val toastMessage = SingleLiveEvent<String>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+
+    val newerCount: LiveData<Int> = data.switchMap {
+        repository.getNewer(it.posts.firstOrNull()?.id ?: 0L)
+            .catch { e -> e.printStackTrace() }
+            .asLiveData(Dispatchers.Default)
+    }
 
     init {
         loadPosts()
@@ -50,6 +63,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             _state.value = FeedModelState(error = true)
         }
 
+
+    }
+
+    fun loadVisiblePosts() = viewModelScope.launch {
+        try {
+            repository.showAll()
+        } catch (e: Exception) {
+            _state.value = FeedModelState(error = true)
+        }
 
     }
 
