@@ -1,9 +1,12 @@
 package ru.netology.nmedia.service
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -36,9 +39,9 @@ class FCMService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
 
         message.data[action]?.let {
-           when (Action.valueOf(it)) {
-              Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
-           }
+            when (Action.valueOf(it)) {
+                Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
+            }
         }
     }
 
@@ -59,6 +62,13 @@ class FCMService : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
         NotificationManagerCompat.from(this)
             .notify(Random.nextInt(100_000), notification)
     }
@@ -74,4 +84,3 @@ data class Like(
     val postId: Long,
     val postAuthor: String,
 )
-
