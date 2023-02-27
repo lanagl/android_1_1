@@ -1,12 +1,16 @@
 package ru.netology.nmedia.repository
 
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.dao.PostDao
-import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.*
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toDto
 import ru.netology.nmedia.entity.toEntity
@@ -14,6 +18,7 @@ import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
+import ru.netology.nmedia.model.PostModel
 import java.io.IOException
 
 
@@ -28,27 +33,17 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
         .map(List<PostEntity>::toDto)
         .flowOn(Dispatchers.Default)
 
-    override suspend fun getById(id: Long) {
-        try {
-            val response = PostsApi.retrofitService.getById(id)
-            if (!response.isSuccessful) throw ApiError(response.code(), response.message())
-            response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.getById(id)
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
+    override suspend fun getById(id: Long?): Post? {
+        return if(id!=null) postDao.getById(id).toDto() else null
     }
-
 
     override suspend fun likeById(id: Long, isLiked: Boolean) {
         if (isLiked) {
             try {
-                val response = PostsApi.retrofitService.dislikeById(id)
-                if (!response.isSuccessful) throw ApiError(response.code(), response.message())
-                response.body() ?: throw ApiError(response.code(), response.message())
-                postDao.likeById(id)
+                    val response = PostsApi.retrofitService.dislikeById(id)
+                    if (!response.isSuccessful) throw ApiError(response.code(), response.message())
+                    response.body() ?: throw ApiError(response.code(), response.message())
+                    postDao.likeById(id)
             } catch (e: IOException) {
                 throw NetworkError
             } catch (e: Exception) {
@@ -57,10 +52,12 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
 
         } else {
             try {
-                val response = PostsApi.retrofitService.likeById(id)
-                if (!response.isSuccessful) throw ApiError(response.code(), response.message())
-                response.body() ?: throw ApiError(response.code(), response.message())
-                postDao.likeById(id)
+                    val response = PostsApi.retrofitService.likeById(id)
+                    if (!response.isSuccessful) throw ApiError(response.code(), response.message())
+                    response.body() ?: throw ApiError(response.code(), response.message())
+                    postDao.likeById(id)
+
+
             } catch (e: IOException) {
                 throw NetworkError
             } catch (e: Exception) {
@@ -140,5 +137,39 @@ class PostRepositoryImpl(private val postDao: PostDao) : PostRepository {
 
     }
 
+    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
+        try {
+            val media = upload(upload)
+            // TODO: add support for other types
+            val postWithAttachment =
+                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            save(postWithAttachment)
+        } catch (e: AppError) {
+            throw e
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun upload(upload: MediaUpload): Media {
+        try {
+            val media = MultipartBody.Part.createFormData(
+                "file", upload.file.name, upload.file.asRequestBody()
+            )
+
+            val response = PostsApi.retrofitService.upload(media)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
 
 }
